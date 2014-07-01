@@ -48,7 +48,10 @@ class TaagCommand(sublime_plugin.TextCommand):
     }
     wrap = {
         'js': ['// ', ''],
-        'css': ['/* ', '*/']
+        'sass': ['// ', ''],
+        'css': ['/* ', '*/'],
+        'coffee': ['# ', ''],
+        'python': ['# ', '']
     }
 
     def run(self, edit):
@@ -61,10 +64,13 @@ class TaagCommand(sublime_plugin.TextCommand):
         scope = self.view.scope_name(self.view.sel()[0].end())
         res = re.search('\\bsource\\.([a-z+\-]+)', scope)
         context = res.group(1) if res else 'js'
+        if context not in self.wrap:
+            context = 'js'
         print res
         for x in range(0, 5):
             text = text + self.wrap[context][0]
             for c in user_input.upper():
                 text = text + self.chars[c].split('\n')[x] + ' '
             text = text + self.wrap[context][1] + '\n'
-        self.view.replace(self.edit, self.region, text)
+        self.view.replace(self.edit, self.region, '')
+        self.view.insert(self.edit, self.view.sel()[0].begin(), text + '\n')
