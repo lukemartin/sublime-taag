@@ -66,11 +66,13 @@ class TaagCommand(sublime_plugin.TextCommand):
         context = res.group(1) if res else 'js'
         if context not in self.wrap:
             context = 'js'
-        print res
+        (row, col) = self.view.rowcol(self.view.sel()[0].begin())
         for x in range(0, 5):
+            if x is not 0:
+                text = text + (' ' * col)
             text = text + self.wrap[context][0]
             for c in user_input.upper():
                 text = text + self.chars[c].split('\n')[x] + ' '
             text = text + self.wrap[context][1] + '\n'
         self.view.replace(self.edit, self.region, '')
-        self.view.insert(self.edit, self.view.sel()[0].begin(), text + '\n')
+        self.view.insert(self.edit, self.view.sel()[0].begin(), text + '\n' + (' ' * col))
